@@ -1,0 +1,12 @@
+<div>
+  <div class="grid grid-rows-6 gap-1">
+    <%= for {attempt, index} <- Enum.with_index(@game.attempts) do %>
+      <WordleComponents.guess_row row_index={index} word="PASTO" guess={attempt} />
+    <% end %>
+  </div>
+  <div class="mt-20"></div>
+
+  <div>
+    <WordleComponents.keyboard word="PASTO" attempts={@game.attempts} />
+  </div>
+</div>

@@ -28,14 +28,55 @@ defmodule ExWordle.GameEngineTest do
 
   describe "confirm_attempt/1" do
     test "will move all next key attempts to the next row" do
-      new_game = new_game(%{keys_attempted: "PASTO", attempts: ["PASTO", "", "", "", "", ""]})
+      new_game =
+        new_game(%{
+          keys_attempted: "PASTO",
+          attempts: ["PASTO", "", "", "", "", ""],
+          word: "TESTS"
+        })
+
       {:ok, game} = GameEngine.confirm_attempt(new_game)
       assert game.row_index == 1
+      assert game.last_attempted_row == 1
     end
 
     test "can't confirm when there are less than 5 key attempts in the row" do
       new_game = new_game(%{keys_attempted: "PAST", attempts: ["PAST", "", "", "", "", ""]})
       assert {:error, :row_not_completed} = GameEngine.confirm_attempt(new_game)
+    end
+
+    test "will keep state as playing when the user didn't finish the attempts nor match the word" do
+      new_game =
+        new_game(%{keys_attempted: "PASTE", attempts: ["PAST", "", "", "", "", ""], word: "PASTO"})
+
+      assert new_game.state == :playing
+
+      {:ok, game} = GameEngine.confirm_attempt(new_game)
+      assert game.state == :playing
+    end
+
+    test "will set the state to win when the user hit the word" do
+      new_game =
+        new_game(%{keys_attempted: "PASTO", attempts: ["PAST", "", "", "", "", ""], word: "PASTO"})
+
+      assert new_game.state == :playing
+
+      {:ok, game} = GameEngine.confirm_attempt(new_game)
+      assert game.state == :win
+    end
+
+    test "will set the state to loose when the user does not hit the word after all 6 attempts" do
+      new_game =
+        new_game(%{
+          keys_attempted: "NESTS",
+          attempts: ["PASTI", "MASTI", "TASTE", "PASTE", "TESTS", "NESTS"],
+          word: "WORDS"
+        })
+
+      assert new_game.state == :playing
+
+      {:ok, game} = GameEngine.confirm_attempt(new_game)
+      assert game.state == :loose
     end
   end
 

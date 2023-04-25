@@ -17,9 +17,10 @@ defmodule ExWordle.Application do
       # Start Finch
       {Finch, name: ExWordle.Finch},
       # Start the Endpoint (http/https)
-      ExWordleWeb.Endpoint
+      ExWordleWeb.Endpoint,
       # Start a worker by calling: ExWordle.Worker.start_link(arg)
       # {ExWordle.Worker, arg}
+      {ExWordle.StateAgent, name: ExWordle.StateAgent}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

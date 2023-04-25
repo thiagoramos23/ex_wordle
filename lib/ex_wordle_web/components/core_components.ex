@@ -630,10 +630,17 @@ defmodule ExWordleWeb.CoreComponents do
 
   def show_modal(js \\ %JS{}, id) when is_binary(id) do
     js
-    |> JS.show(to: "##{id}")
+    |> JS.show(
+      to: "##{id}",
+      transition:
+        {"transition-all ease-out duration-1000", "opacity-0 translate-y-4 scale-95",
+         "opacity-100 translate-y-0 scale-100"},
+      time: 900
+    )
     |> JS.show(
       to: "##{id}-bg",
-      transition: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"}
+      transition: {"transition-all ease-out duration-1000", "opacity-0", "opacity-100"},
+      time: 900
     )
     |> show("##{id}-container")
     |> JS.add_class("overflow-hidden", to: "body")

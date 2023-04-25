@@ -15,7 +15,27 @@ module.exports = {
     extend: {
       colors: {
         brand: "#FD4F00",
-      }
+      },
+      keyframes: {
+        loose: {
+          '0%': { transform: 'translateX(0px)' },
+          '25%': { transform: 'translateX(-5px)'},
+          '50%': { transform: 'translateX(0px)'},
+          '75%': { transform: 'translateX(5px)'},
+          '100%': { transform: 'translateX(0px)' },
+        },
+        rotate: {
+          '0%': { transform: 'rotateX(0deg)' },
+          '25%': { transform: 'rotateX(90deg)' },
+          '50%': { transform: 'rotateX(180deg)' },
+          '75%': { transform: 'rotateX(90deg)' },
+          '100%': { transform: 'rotateX(0deg)' },
+        },
+      },
+      animation: {
+        rotate: 'rotate 0.8s ease-out 1 forwards',
+        loose: 'loose 0.2s linear 5 forwards'
+      },
     },
   },
   plugins: [

@@ -1,7 +1,7 @@
 <div phx-window-keydown="handle_keydown">
   <div class="grid grid-rows-6 gap-1">
     <%= for {attempt, index} <- Enum.with_index(@game.attempts) do %>
-      <WordleComponents.guess_row row_index={index} word={@game.word} guess={attempt} />
+      <WordleComponents.guess_row row_index={index} game={@game} guess={attempt} />
     <% end %>
   </div>
   <div class="mt-20"></div>
@@ -9,4 +9,6 @@
   <div>
     <WordleComponents.keyboard game={@game} />
   </div>
+
+  <ModalGameOver.show :if={@game.state != :playing} show id="modal-game-over" />
 </div>

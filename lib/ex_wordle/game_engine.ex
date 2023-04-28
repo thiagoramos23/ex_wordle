@@ -1,11 +1,13 @@
 defmodule ExWordle.GameEngine do
+  alias ExWordle.GameServer
+
   defstruct attempts: ["", "", "", "", "", ""],
             keys_attempted: "",
             key_states: %{},
             last_attempted_row: 0,
             row_index: 0,
             state: :playing,
-            word: "WORDS"
+            word: ""
 
   @valid_keys ~w(Q W E R T Y U I O P A S D F G H J K L Z X C V B N M)
   @keyboard_lines [
@@ -15,7 +17,9 @@ defmodule ExWordle.GameEngine do
   ]
 
   def new() do
-    __struct__()
+    word = GameServer.get_daily_word()
+    game = __struct__()
+    %{game | word: String.upcase(word)}
   end
 
   def valid_key?(key), do: key in @valid_keys
@@ -94,6 +98,8 @@ defmodule ExWordle.GameEngine do
       true -> :not_found
     end
   end
+
+  def win?(game), do: game.state == :win
 
   defp get_key_states(game) do
     for attempt <- game.attempts do

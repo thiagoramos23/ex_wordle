@@ -10,5 +10,5 @@
     <WordleComponents.keyboard game={@game} />
   </div>
 
-  <ModalGameOver.show :if={@game.state != :playing} show id="modal-game-over" />
+  <ModalGameOver.show :if={@game.state != :playing} show id="modal-game-over" game={@game} />
 </div>

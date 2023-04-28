@@ -12,6 +12,8 @@ defmodule ExWordleWeb.WordleLive.Index do
     socket = socket |> PhoenixLiveSession.maybe_subscribe(session) |> put_session_assigns(session)
     game = get_game_or_new(socket)
 
+    IO.inspect(game)
+
     {:ok,
      socket
      |> assign(:game, game)
@@ -60,7 +62,7 @@ defmodule ExWordleWeb.WordleLive.Index do
 
   def handle_info({:live_session_updated, session}, socket) do
     socket = put_session_assigns(socket, session)
-    StateAgent.save_session_state(socket.assigns.session_id, socket.assigns.game)
+    StateAgent.save_game_state(socket.assigns.session_id, socket.assigns.game)
     {:noreply, socket}
   end
 

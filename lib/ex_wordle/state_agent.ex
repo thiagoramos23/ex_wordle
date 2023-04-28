@@ -5,7 +5,7 @@ defmodule ExWordle.StateAgent do
     Agent.start_link(fn -> %{} end, name: __MODULE__)
   end
 
-  def save_session_state(key, session_state) do
+  def save_game_state(key, session_state) do
     Agent.get_and_update(__MODULE__, fn old_state ->
       {old_state, Map.put(old_state, key, session_state)}
     end)

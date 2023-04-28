@@ -20,7 +20,8 @@ defmodule ExWordle.Application do
       ExWordleWeb.Endpoint,
       # Start a worker by calling: ExWordle.Worker.start_link(arg)
       # {ExWordle.Worker, arg}
-      {ExWordle.StateAgent, name: ExWordle.StateAgent}
+      {ExWordle.StateAgent, name: ExWordle.StateAgent},
+      {ExWordle.GameServer, name: ExWordle.GameServer}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

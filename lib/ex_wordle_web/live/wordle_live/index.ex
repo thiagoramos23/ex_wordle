@@ -146,8 +146,10 @@ defmodule ExWordleWeb.WordleLive.Index do
   end
 
   defp put_session_assigns(socket, session) do
+    IO.inspect(session, label: "GETTING SESSION")
+
     socket
-    |> assign(:session_id, Map.get(session, :session_id, :crypto.strong_rand_bytes(@rand_size)))
+    |> assign(:session_id, Map.get(session, "session_id", :crypto.strong_rand_bytes(@rand_size)))
   end
 
   defp upsert_session(socket) do

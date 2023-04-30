@@ -6,6 +6,7 @@ defmodule ExWordleWeb.WordleComponents do
 
   attr :row_index, :integer
   attr :game, GameEngine
+  attr :guess, :string
 
   def guess_row(assigns) do
     ~H"""
@@ -28,7 +29,7 @@ defmodule ExWordleWeb.WordleComponents do
     """
   end
 
-  attr :key_states, :map
+  attr :game, GameEngine
 
   def keyboard(assigns) do
     key_states = GameEngine.key_states(assigns.game)
@@ -47,6 +48,7 @@ defmodule ExWordleWeb.WordleComponents do
   end
 
   attr :key, :string
+  attr :key_states, :map
   attr :background, :string
 
   defp key(assigns) do

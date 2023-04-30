@@ -17,9 +17,9 @@ defmodule ExWordle.GameEngine do
   ]
 
   def new() do
-    # word = GameServer.get_daily_word()
+    word = GameServer.get_daily_word()
     game = __struct__()
-    %{game | word: String.upcase("TESTS")}
+    %{game | word: String.upcase(word)}
   end
 
   def valid_key?(key), do: key in @valid_keys

@@ -133,7 +133,9 @@ defmodule ExWordleWeb.WordleLive.Index do
   defp get_game_or_new(socket) do
     session_id = socket.assigns.session_id
     game = StateAgent.get_game_state(session_id)
+    IO.inspect(game, label: "GAME FROM SESSION")
     word = GameServer.get_daily_word()
+    IO.inspect(word, label: "WORD FROM GAME SERVER")
 
     game =
       if is_nil(game) || word != game.word do

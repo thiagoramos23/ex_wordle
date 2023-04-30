@@ -23,13 +23,13 @@ defmodule ExWordle.GameServer do
   end
 
   def handle_continue(:set_word, _state) do
-    {:noreply, %{date: Date.utc_today(), word: get_word()}}
+    {:noreply, %{date: Date.utc_today(), word: set_random_word()}}
   end
 
   def handle_info(:check_new_day, state) do
     updated_state =
       if state.date != Date.utc_today() do
-        %{date: Date.utc_today(), word: get_word()}
+        %{date: Date.utc_today(), word: set_random_word()}
       else
         state
       end
@@ -40,11 +40,12 @@ defmodule ExWordle.GameServer do
   end
 
   defp schedule_work do
-    Process.send_after(self(), :check_new_day, 60_000)
+    Process.send_after(self(), :check_new_day, 120_000)
   end
 
-  defp get_word do
+  defp set_random_word do
     Constants.words()
     |> Enum.random()
+    |> String.upcase()
   end
 end

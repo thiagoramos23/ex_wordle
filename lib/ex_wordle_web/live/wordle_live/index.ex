@@ -59,12 +59,6 @@ defmodule ExWordleWeb.WordleLive.Index do
     {:noreply, socket |> assign(:game, game)}
   end
 
-  def handle_info({:live_session_updated, session}, socket) do
-    socket = put_session_assigns(socket, session)
-    StateAgent.save_game_state(socket.assigns.session_id, socket.assigns.game)
-    {:noreply, socket}
-  end
-
   defp confirm_attempt(socket) do
     game = socket.assigns.game
 
@@ -80,8 +74,9 @@ defmodule ExWordleWeb.WordleLive.Index do
           end)
 
         socket
-        |> upsert_session()
         |> assign(:game, game)
+        |> upsert_session()
+        |> save_game_state()
 
       {:error, :word_does_not_exist} ->
         socket
@@ -133,9 +128,7 @@ defmodule ExWordleWeb.WordleLive.Index do
   defp get_game_or_new(socket) do
     session_id = socket.assigns.session_id
     game = StateAgent.get_game_state(session_id)
-    IO.inspect(game, label: "GAME FROM SESSION")
     word = GameServer.get_daily_word()
-    IO.inspect(word, label: "WORD FROM GAME SERVER")
 
     game =
       if is_nil(game) || word != game.word do
@@ -147,16 +140,21 @@ defmodule ExWordleWeb.WordleLive.Index do
     game
   end
 
+  defp save_game_state(socket) do
+    StateAgent.save_game_state(socket.assigns.session_id, socket.assigns.game)
+    socket
+  end
+
   defp put_session_assigns(socket, session) do
     socket
-    |> assign(:session_id, Map.get(session, :session_id, nil))
+    |> assign(:session_id, Map.get(session, :session_id, :crypto.strong_rand_bytes(@rand_size)))
   end
 
   defp upsert_session(socket) do
     PhoenixLiveSession.put_session(
       socket,
       :session_id,
-      :crypto.strong_rand_bytes(@rand_size)
+      socket.assigns.session_id
     )
   end
 end

@@ -5,6 +5,7 @@ defmodule ExWordleWeb.WordleLive.Index do
   alias ExWordleWeb.WordleComponents
   alias ExWordle.StateAgent
   alias ExWordle.GameEngine
+  alias ExWordle.GameServer
 
   @rand_size 96
 
@@ -132,11 +133,14 @@ defmodule ExWordleWeb.WordleLive.Index do
   defp get_game_or_new(socket) do
     session_id = socket.assigns.session_id
     game = StateAgent.get_game_state(session_id)
+    word = GameServer.get_daily_word()
 
     game =
-      if is_nil(game),
-        do: GameEngine.new(),
-        else: game
+      if is_nil(game) || word != game.word do
+        GameEngine.new(word)
+      else
+        game
+      end
 
     game
   end

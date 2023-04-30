@@ -1,6 +1,4 @@
 defmodule ExWordle.GameEngine do
-  alias ExWordle.GameServer
-
   defstruct attempts: ["", "", "", "", "", ""],
             keys_attempted: "",
             key_states: %{},
@@ -16,8 +14,7 @@ defmodule ExWordle.GameEngine do
     ~w(ENTER Z X C V B N M BACKSPACE)
   ]
 
-  def new() do
-    word = GameServer.get_daily_word()
+  def new(word) do
     game = __struct__()
     %{game | word: String.upcase(word)}
   end

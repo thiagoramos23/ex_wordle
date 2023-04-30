@@ -4,6 +4,10 @@ defmodule ExWordleWeb.ModalGameOver do
 
   alias ExWordle.GameEngine
 
+  attr :id, :string, required: true
+  attr :show, :boolean, required: true
+  attr :game, GameEngine, required: true
+
   def show(assigns) do
     ~H"""
     <div

@@ -10,6 +10,18 @@ defmodule ExWordle.GameEngineTest do
     end
   end
 
+  describe "valid_key?/1" do
+    test "returns true when key is between A to Z" do
+      for key <- ~w(Q W E R T Y U I O P A S D F G H J K L Z X C V B N M) do
+        assert GameEngine.valid_key?(key)
+      end
+    end
+
+    test "returns false when key is invalid" do
+      refute GameEngine.valid_key?("1")
+    end
+  end
+
   describe "add_key_attempted/2" do
     test "add_key_attempted/2 will add a key and update the attempts state" do
       new_game = new_game()
@@ -30,8 +42,8 @@ defmodule ExWordle.GameEngineTest do
     test "will move all next key attempts to the next row" do
       new_game =
         new_game(%{
-          keys_attempted: "PASTO",
-          attempts: ["PASTO", "", "", "", "", ""],
+          keys_attempted: "WORDS",
+          attempts: ["WORDS", "", "", "", "", ""],
           word: "TESTS"
         })
 
@@ -57,7 +69,7 @@ defmodule ExWordle.GameEngineTest do
 
     test "will set the state to win when the user hit the word" do
       new_game =
-        new_game(%{keys_attempted: "PASTO", attempts: ["PAST", "", "", "", "", ""], word: "PASTO"})
+        new_game(%{keys_attempted: "WORDS", attempts: ["WORD", "", "", "", "", ""], word: "WORDS"})
 
       assert new_game.state == :playing
 
@@ -98,23 +110,16 @@ defmodule ExWordle.GameEngineTest do
   end
 
   describe "key_states/1" do
-    test "when the key is attempted and it is correct should have state :found" do
-      new_game = new_game(%{word: "TESTS"})
-      game = GameEngine.add_key_attempted(new_game, "T")
-      game = GameEngine.add_key_attempted(game, "E")
-      assert %{"T" => :found, "E" => :found} = GameEngine.key_states(game)
-    end
+    test "when the confirms attempts it gets the key states" do
+      new_game = new_game(%{word: "TESTS", keys_attempted: "GUESS", attempts: ["GUESS"]})
+      {:ok, game} = GameEngine.confirm_attempt(new_game)
 
-    test "when the key is attempted and it is misplaced should have state :misplaced" do
-      new_game = new_game(%{word: "TESTS"})
-      game = GameEngine.add_key_attempted(new_game, "E")
-      assert %{"E" => :misplaced} = GameEngine.key_states(game)
-    end
-
-    test "when the key is attempted but it does not exist in the word should have a state :not_found" do
-      new_game = new_game(%{word: "TESTS"})
-      game = GameEngine.add_key_attempted(new_game, "X")
-      assert %{"X" => :not_found} = GameEngine.key_states(game)
+      assert %{
+               "G" => :not_found,
+               "U" => :not_found,
+               "E" => :misplaced,
+               "S" => :found
+             } = GameEngine.key_states(game)
     end
   end
 

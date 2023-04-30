@@ -35,7 +35,7 @@ defmodule ExWordle.GameServer do
       end
 
     schedule_work()
-    Logger.info("Word updated: #{updated_state}")
+    Logger.info("Word #{updated_state.word} updated: at #{updated_state.date}")
     {:noreply, updated_state}
   end
 

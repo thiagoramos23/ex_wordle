@@ -12,8 +12,6 @@ defmodule ExWordleWeb.WordleLive.Index do
     socket = socket |> PhoenixLiveSession.maybe_subscribe(session) |> put_session_assigns(session)
     game = get_game_or_new(socket)
 
-    IO.inspect(game)
-
     {:ok,
      socket
      |> assign(:game, game)

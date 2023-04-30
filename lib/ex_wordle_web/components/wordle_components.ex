@@ -4,6 +4,9 @@ defmodule ExWordleWeb.WordleComponents do
   alias Phoenix.LiveView.JS
   alias ExWordle.GameEngine
 
+  attr :row_index, :integer
+  attr :game, GameEngine
+
   def guess_row(assigns) do
     ~H"""
     <div
@@ -12,19 +15,20 @@ defmodule ExWordleWeb.WordleComponents do
       data-wiggle={animate_event("animate-wiggle", "#row-#{@row_index}")}
       data-loose={animate_event("animate-loose", "#row-#{@row_index}")}
     >
-      <%= for index <- 0..4 do %>
-        <.guess_tile
-          word={@game.word}
-          guess={@guess}
-          guess_char={guess_at(@guess, index)}
-          row_index={@row_index}
-          column_index={index}
-          last_attempted_row={@game.last_attempted_row}
-        />
-      <% end %>
+      <.guess_tile
+        :for={index <- 0..4}
+        word={@game.word}
+        guess={@guess}
+        guess_char={guess_at(@guess, index)}
+        row_index={@row_index}
+        column_index={index}
+        last_attempted_row={@game.last_attempted_row}
+      />
     </div>
     """
   end
+
+  attr :key_states, :map
 
   def keyboard(assigns) do
     key_states = GameEngine.key_states(assigns.game)
@@ -32,25 +36,22 @@ defmodule ExWordleWeb.WordleComponents do
 
     ~H"""
     <div class="flex flex-col items-center space-y-1 md:space-y-2">
-      <%= for key_line <- GameEngine.get_keyboard_lines() do %>
-        <div class="flex items-center space-x-1 md:space-x-2">
-          <%= for key <- key_line do %>
-            <.key
-              key={key}
-              word={@game.word}
-              attempts={@game.attempts}
-              key_states={@key_states}
-              last_attempted_row={@game.last_attempted_row}
-            />
-          <% end %>
-        </div>
-      <% end %>
+      <div
+        :for={key_line <- GameEngine.get_keyboard_lines()}
+        class="flex items-center space-x-1 md:space-x-2"
+      >
+        <.key :for={key <- key_line} key={key} key_states={@key_states} />
+      </div>
     </div>
     """
   end
 
+  attr :key, :string
+  attr :background, :string
+
   defp key(assigns) do
-    assigns = assigns_keyboard_background_state(assigns)
+    background = select_background_color(assigns.key_states, assigns.key)
+    assigns = assign(assigns, :background, background)
 
     ~H"""
     <button
@@ -66,28 +67,25 @@ defmodule ExWordleWeb.WordleComponents do
     """
   end
 
-  defp assigns_keyboard_background_state(assigns) do
+  defp select_background_color(key_states, key) do
     result =
-      Enum.find(assigns.key_states, fn {attempted_key, _state} ->
-        attempted_key == assigns.key
+      Enum.find(key_states, fn {attempted_key, _state} ->
+        attempted_key == key
       end)
 
-    background_color =
-      case result do
-        nil ->
-          "bg-gray-500"
+    case result do
+      nil ->
+        "bg-gray-500"
 
-        {_, :not_found} ->
-          "bg-gray-800"
+      {_, :not_found} ->
+        "bg-gray-800"
 
-        {_, :misplaced} ->
-          "bg-yellow-600"
+      {_, :misplaced} ->
+        "bg-yellow-600"
 
-        {_, :found} ->
-          "bg-green-600"
-      end
-
-    assign(assigns, :background, background_color)
+      {_, :found} ->
+        "bg-green-600"
+    end
   end
 
   defp guess_at(guess, index) do
